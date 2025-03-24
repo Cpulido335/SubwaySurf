@@ -1,0 +1,121 @@
+<style>
+    body {
+        margin: 0;
+    }
+</style>
+  
+<script
+    async
+    src="https://unpkg.com/es-module-shims@1.6.3/dist/es-module-shims.js"
+></script>
+  
+<script type="importmap">
+{
+    "imports": {
+    "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
+    }
+}
+</script>
+
+<script type = "module">
+    import * as THREE from 'three'
+    // @ts-ignore
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    // @ts-ignore
+    import { OBJLoader } from "three/addons/loaders/OBJLoader.js";
+
+
+    //Constants
+    const CARRIAGE_SPEED = 3;
+
+
+    //setup
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+
+    const renderer = new THREE.WebGLRenderer()
+    renderer.setSize(window.innerWidth, window.innerHeight)
+    document.body.appendChild(renderer.domElement)
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+
+    //plane
+    const plane_geom = new THREE.BoxGeometry(1000, 1, 1000);
+    const plane_material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const plane_cube = new THREE.Mesh(plane_geom, plane_material);
+
+    scene.add(plane_cube)
+    // move the plane down
+    plane_cube.translateX(-100)
+
+
+
+
+    //subway car
+    let myObject; // Declare globally so it's accessible everywhere
+
+    const objLoader = new OBJLoader();
+    objLoader.load("subway_car.obj", (object) => {
+        myObject = object; // Store globally
+        myObject.scale.set(0.1, 0.1, 0.1); // Scale down
+        scene.add(myObject);
+    });
+
+        
+
+    const foundObject = scene.getObjectByName("object");
+    if (foundObject) {
+        foundObject.position.x += 1;
+        cube.translateX(10000)
+    }
+
+
+
+    // lights 
+    const light = new THREE.DirectionalLight(0xffffff, 1) //directional light
+    scene.add(light);
+    const al = new THREE.AmbientLight(0xffffff, 0.1); //ambient light
+    scene.add(al);
+
+
+    // camera
+    camera.position.z = 500;
+    camera.position.y = 50;
+
+    function animate() {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+
+        
+        try {
+            if (myObject?.translateZ) {  // Check if myObject and translateZ exist
+                myObject.translateZ(CARRIAGE_SPEED);
+            } else {
+                console.warn("myObject is undefined or doesn't support translateZ.");
+            }
+        
+            if (myObject?.position?.z !== undefined) {  // Check if position exists
+                if (myObject.position.z > 500) {
+                    myObject.position.z = -200;
+                }
+            } else {
+                console.warn("myObject's position is undefined.");
+            }
+        } catch (error) {
+            console.error("An error occurred while moving myObject:", error);
+        }
+        
+        }
+
+    animate()
+
+</script>
