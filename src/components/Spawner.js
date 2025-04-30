@@ -5,12 +5,15 @@ import { DeathObject } from './DeathObject.js';
 
 import { LEFT_LANE_POSITION, CENTER_LANE_POSITION, RIGHT_LANE_POSITION } from '../settings.js';
 
+//import { CoinSpawner } from "./Coin.js";
+
 
 export class Spawner {
     constructor(scene,  
                 modelMeshQueue, 
                 surfaceObjectMeshQueue, surfaceObjectBoundingBoxQueue, 
-                deathObjectMeshQueue, deathObjectBoundingBoxQueue) 
+                deathObjectMeshQueue, deathObjectBoundingBoxQueue,
+                coinQueue) 
     {
         this.scene = scene; //a spawner instance needs references to the scene and the object queues
         this.surfaceObjectMeshQueue = surfaceObjectMeshQueue;
@@ -20,14 +23,18 @@ export class Spawner {
         this.deathObjectMeshQueue = deathObjectMeshQueue; //the fronts of the carriages that kills the player goes in these
         this.deathObjectBoundingBoxQueue = deathObjectBoundingBoxQueue;
 
+        this.coinQueue = coinQueue;
+
         this.spawn_lanes = [1, 2, 3]; 
     }
+
 
     pickRandomLane() {
         console.log("Picking lane");
         return Math.floor(Math.random() * 3); // Random lane (0, 1, or 2)
     }
     
+
     createGround(z_SpawnPosition) {
         const loader = new GLTFLoader();
         loader.load('./assets/ground.glb', (gltf) => {
@@ -42,10 +49,8 @@ export class Spawner {
         });
     }
 
-    createCarriageObject(x_SpawnPosition, z_SpawnPosition) { //PROBLEM: change this to createCarriageMesh
-        console.log("Creating subway carriage...");
-        console.log("X spawn position:", x_SpawnPosition);
 
+    createCarriageObject(x_SpawnPosition, z_SpawnPosition) { //PROBLEM: change this to createCarriageMesh
         const loader = new GLTFLoader();
         loader.load('./assets/subway_car.glb', (gltf) => {
             let myObject = gltf.scene; //use gltf.scene instead of object
@@ -65,6 +70,7 @@ export class Spawner {
         });
     }
 
+
     spawnCarriage(playerZPosition) {
         let x_position = 0;
         let z_position = playerZPosition - 1000; //this has to be based on the players z position PROBLEM: instead of 400 you should put something like CARRIAGE_SPAWN_DISTANCE from settings
@@ -79,7 +85,7 @@ export class Spawner {
         }
 
         this.createCarriageObject(x_position, z_position);
-        
+
         //add the bounding box meshes for visualization //PROBLEM: we dont need to visualize them when deployed
 
         //rooftop meshes and their corresponding boundingboxes
@@ -98,5 +104,43 @@ export class Spawner {
 
         this.scene.add(deathObject.front_of_carriage_bounding_box);
         this.deathObjectBoundingBoxQueue.push(deathObject.front_of_carriage_bounding_box);
+    }
+
+    
+    createCoinObject(x_SpawnPosition, z_SpawnPosition){
+        const loader = new GLTFLoader();
+        loader.load('./assets/gold_coin4.glb', (gltf) => {
+            let myObject = gltf.scene; //use gltf.scene instead of object
+            myObject.position.set(x_SpawnPosition, 20, z_SpawnPosition); //modify the spawn pos so multiple lanes PROBLEM: why is there a 7??
+            myObject.scale.set(12, 12, 12); 
+            myObject.rotation.x = Math.PI / 2; // rotate it so its up right
+            this.scene.add(myObject);
+            this.coinQueue.push(myObject); //store for animation
+
+            //traverse the object to set castShadow on all mesh nodes
+            myObject.traverse((node) => {
+                if (node.isMesh) {
+                    node.castShadow = true; 
+                }
+            });
+        }, undefined, (error) => {
+            console.error("Error loading GLB:", error);
+        });
+    }
+
+
+    spawnCoin(playerZPosition) {
+        let x_position = 0;
+        let z_position = playerZPosition - 1000; //this has to be based on the players z position PROBLEM: instead of 400 you should put something like CARRIAGE_SPAWN_DISTANCE from settings
+        this.lane = this.pickRandomLane();
+        console.log("Picked lane:", this.lane);
+
+        switch (this.lane) {
+            case 0: x_position = LEFT_LANE_POSITION; break;
+            case 1: x_position = CENTER_LANE_POSITION; break;
+            case 2: x_position = RIGHT_LANE_POSITION; break;
+            default: x_position = 0; // Default if lane is not 0, 1, or 2
+        }
+        this.createCoinObject(x_position, z_position);
     }
 }

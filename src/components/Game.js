@@ -6,6 +6,7 @@ import { Ground } from './Ground.js'
 import { Player } from './Player.js' 
 import { DebugOverlay } from './DebugOverlay.js';
 import { Death } from './Death.js';
+import { PLAYER_SPEED } from '../settings.js'
 
 
 export class Game {
@@ -34,14 +35,20 @@ export class Game {
         );
 
         //ambient light 
-        this.al = new THREE.AmbientLight(0xffffff, 0.5); //ambient light
+        this.al = new THREE.AmbientLight(0xffffff, 1); //ambient light
         this.scene.add(this.al);
 
         //direction light PROBLEM: why tf do we need this
         this.directional_light = new THREE.DirectionalLight(0xffffff, 1);
         this.directional_light.position.set(0, 400, 0);
         this.directional_light.castShadow = true;  // Enable shadow casting for the light source
+        // Set the target's position — e.g., directly below and in front
+        //this.directional_light.target.position.set(0, 0, -1);
         this.scene.add(this.directional_light);
+
+        // Add a helper to visualize the directional light
+        const lightHelper = new THREE.DirectionalLightHelper(this.directional_light, 50, 0xff0000);
+        this.scene.add(lightHelper);
 
         //Object queues 
         this.surfaceObjectMeshQueue = []; 
@@ -51,9 +58,11 @@ export class Game {
         // death object queues
         this.deathObjectMeshQueue = [];
         this.deathObjectBoundingBoxQueue = [];
+        
+        this.coinQueue = [];
 
-        //create spawner instance 
-        this.s = new Spawner(this.scene, this.modelMeshQueue, this.surfaceObjectMeshQueue, this.surfaceObjectBoundingBoxQueue, this.deathObjectMeshQueue, this.deathObjectBoundingBoxQueue);
+        //create spawner instance //PROBLEM: this would be our carriage spawner and have the function spawnCoin or spawn a line of coins all at once 
+        this.s = new Spawner(this.scene, this.modelMeshQueue, this.surfaceObjectMeshQueue, this.surfaceObjectBoundingBoxQueue, this.deathObjectMeshQueue, this.deathObjectBoundingBoxQueue, this.coinQueue);
         
         //create gorund instance
         this.ground = new Ground(this.scene);       
@@ -65,9 +74,14 @@ export class Game {
         //add controls
         this.addControls(this.player)
 
-        //spawner timer
-        this.timer = new RandomEventTimer(() => this.s.spawnCarriage(this.player.playerMesh.position.z), 2000);
-        this.timer.start(); //start the timer
+        //carriage spawner timer
+        this.timer1 = new RandomEventTimer(() => this.s.spawnCarriage(this.player.playerMesh.position.z), 2000);
+        this.timer1.start(); //start the timer
+        //coin spawner timer
+        this.timer2 = new RandomEventTimer(() => this.s.spawnCoin(this.player.playerMesh.position.z), 500);
+        this.timer2.start(); //start the timer
+
+        
         
         //debug overlay
         this.debugOverlay = new DebugOverlay();
@@ -119,8 +133,11 @@ export class Game {
         }
     
         //stop timers if any
-        if (this.timer) {
-            this.timer.stop();
+        if (this.timer1) {
+            this.timer1.stop();
+        }
+        if (this.timer2) {
+            this.timer2.stop();
         }
     
     
@@ -131,7 +148,11 @@ export class Game {
         this.deathObjectMeshQueue = [];
         this.deathObjectBoundingBoxQueue = [];
     }
-    
-    
+
+    updateLight() {
+        this.directional_light.translateZ(PLAYER_SPEED * -1);
+
+        //this.playerMesh.translateZ(PLAYER_SPEED * -1);
+    }
 } 
     

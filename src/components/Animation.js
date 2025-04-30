@@ -40,6 +40,7 @@ export class Animation {
 
             //move and remove objects
             this.updatePositions(game);
+            game.updateLight();
 
             //debug overlay
             game.debugOverlay.update(game.player);
@@ -53,6 +54,9 @@ export class Animation {
             if (game.player.mixer) {
                 game.player.mixer.update(delta);  //update the player model animation
             }
+
+            //spin coins
+            this.spinCoins(game);
         }
     }
 
@@ -103,6 +107,7 @@ export class Animation {
                 game.deathObjectBoundingBoxQueue.splice(i, 1);
             }
         }
+
     }
 
     static async resetGame(game) {
@@ -128,4 +133,16 @@ export class Animation {
             Animation.animationFrameId = null; //clear the animation frame ID
         }
     }
+
+    static spinCoins(game) { // Iterate through the coin queue //PROBLEM currently passing coing queue directly
+        for (let i = game.coinQueue.length - 1; i >= 0; i--) {
+            const coin = game.coinQueue[i];
+
+            // Apply rotation to each coin (rotate around the Y-axis)
+            coin.rotation.y += 0.05;  // Adjust the value for rotation speed
+
+            // Optional: If you want to ensure the coin is within the player's view or make other updates, do that here
+        }
+    }
+
 }

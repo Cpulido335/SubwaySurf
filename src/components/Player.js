@@ -29,6 +29,8 @@ export class Player {
         this.camera.position.x = this.playerMesh.position.x; //-left +right
         this.camera.position.y = this.playerMesh.position.y +80;
         this.camera.position.z = this.playerMesh.position.z +150; // -forward +backward
+        
+
     
         //lane flags
         this.currentLane = 'center_lane';
