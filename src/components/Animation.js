@@ -139,9 +139,8 @@ export class Animation {
             const coin = game.coinQueue[i];
 
             // Apply rotation to each coin (rotate around the Y-axis)
-            coin.rotation.z += 0.05;  // Adjust the value for rotation speed
-        
-            // Optional: If you want to ensure the coin is within the player's view or make other updates, do that here
+            coin.rotation.z += 0.05;  
+  
         }
     }
 
