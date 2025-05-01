@@ -107,38 +107,38 @@ export class Game {
     }
 
 
-    addControls(player) {
-        function onDocumentKeyDown(event) {
-            const keyCode = event.which || event.keyCode;
+    // addControls(player) {
+    //     function onDocumentKeyDown(event) {
+    //         const keyCode = event.which || event.keyCode;
     
-            //space bar
-            if (keyCode === 32) {
-                player.startJump();
-            }
+    //         //space bar
+    //         if (keyCode === 32) {
+    //             player.startJump();
+    //         }
     
-            //A = 65, D = 68
-            switch (player.currentLane) {
-                case 'left_lane':
-                    if (keyCode === 68) {
-                        player.destinationLane = 'center_lane';
-                    }
-                    break;
-                case 'center_lane':
-                    if (keyCode === 65) {
-                        player.destinationLane = 'left_lane';
-                    } else if (keyCode === 68) {
-                        player.destinationLane = 'right_lane';
-                    }
-                    break;
-                case 'right_lane':
-                    if (keyCode === 65) {
-                        player.destinationLane = 'center_lane';
-                    }
-                    break;
-            }
-        }
-        document.addEventListener("keydown", onDocumentKeyDown, false);
-    }
+    //         //A = 65, D = 68
+    //         switch (player.currentLane) {
+    //             case 'left_lane':
+    //                 if (keyCode === 68) {
+    //                     player.destinationLane = 'center_lane';
+    //                 }
+    //                 break;
+    //             case 'center_lane':
+    //                 if (keyCode === 65) {
+    //                     player.destinationLane = 'left_lane';
+    //                 } else if (keyCode === 68) {
+    //                     player.destinationLane = 'right_lane';
+    //                 }
+    //                 break;
+    //             case 'right_lane':
+    //                 if (keyCode === 65) {
+    //                     player.destinationLane = 'center_lane';
+    //                 }
+    //                 break;
+    //         }
+    //     }
+    //     document.addEventListener("keydown", onDocumentKeyDown, false);
+    // }
     
     onWindowResize() {
         const w = this.container.clientWidth;
@@ -174,5 +174,71 @@ export class Game {
     updateLight() {
         this.directional_light.translateZ(PLAYER_SPEED * -1);
     }
+
+    addControls(player) {
+        let touchStartX = null;
+        let touchStartY = null;
+        const SWIPE_THRESHOLD = 30; // px
+      
+        function onDocumentKeyDown(event) {
+          const keyCode = event.which || event.keyCode;
+      
+          // Jump: Space
+          if (keyCode === 32) {
+            player.startJump();
+            return;
+          }
+      
+          // Move left: A (65) or ← (37)
+          if ((keyCode === 65 || keyCode === 37) && player.currentLane !== 'left_lane') {
+            if (player.currentLane === 'center_lane') player.destinationLane = 'left_lane';
+            else if (player.currentLane === 'right_lane') player.destinationLane = 'center_lane';
+            return;
+          }
+      
+          // Move right: D (68) or → (39)
+          if ((keyCode === 68 || keyCode === 39) && player.currentLane !== 'right_lane') {
+            if (player.currentLane === 'center_lane') player.destinationLane = 'right_lane';
+            else if (player.currentLane === 'left_lane') player.destinationLane = 'center_lane';
+          }
+        }
+      
+        function onTouchStart(e) {
+          if (e.touches.length === 1) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+          }
+        }
+      
+        function onTouchEnd(e) {
+          if (touchStartX === null || touchStartY === null) return;
+          const dx = e.changedTouches[0].clientX - touchStartX;
+          const dy = e.changedTouches[0].clientY - touchStartY;
+      
+          // Vertical swipe (jump)
+          if (dy < -SWIPE_THRESHOLD && Math.abs(dy) > Math.abs(dx)) {
+            player.startJump();
+          }
+          // Horizontal swipe right
+          else if (dx > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+            if (player.currentLane === 'left_lane')      player.destinationLane = 'center_lane';
+            else if (player.currentLane === 'center_lane') player.destinationLane = 'right_lane';
+          }
+          // Horizontal swipe left
+          else if (dx < -SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+            if (player.currentLane === 'right_lane')     player.destinationLane = 'center_lane';
+            else if (player.currentLane === 'center_lane') player.destinationLane = 'left_lane';
+          }
+      
+          touchStartX = null;
+          touchStartY = null;
+        }
+      
+        document.addEventListener('keydown',   onDocumentKeyDown, false);
+        document.addEventListener('touchstart', onTouchStart,     false);
+        document.addEventListener('touchend',   onTouchEnd,       false);
+    }
+      
+      
 } 
     
