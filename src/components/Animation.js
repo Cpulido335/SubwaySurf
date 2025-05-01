@@ -16,12 +16,12 @@ export class Animation {
         if (game.player.isAlive) {
             //continue the animation loop
             Animation.animationFrameId = requestAnimationFrame(() => Animation.animate(game));
-            game.renderer.render(game.scene, game.player.camera);
+            game.renderer.render(game.scene, game.camera);
 
             //background parallax effect
             if (game.scene.background && game.scene.background.isTexture) {
-                game.scene.background.offset.x = game.player.camera.position.x * 0.0005;
-                game.scene.background.offset.y = game.player.camera.position.y * 0.0005;
+                game.scene.background.offset.x = game.camera.position.x * 0.0005;
+                game.scene.background.offset.y = game.camera.position.y * 0.0005;
             }
 
             //update ground tiles
@@ -29,6 +29,7 @@ export class Animation {
 
             //player updates
             game.player.updatePosition();
+            game.updateCameraPosition();
             game.player.pollMovements();
 
             //check collisions
@@ -57,6 +58,9 @@ export class Animation {
 
             //spin coins
             this.spinCoins(game);
+
+            //window resizing
+            game.onWindowResize();
         }
     }
 
@@ -119,7 +123,7 @@ export class Animation {
 
         //after 3 seconds, reset the game
         game.destroy(); // Destroy the old game
-        game = new Game(); //assign it to a newly created game instance
+        game = new Game('three-container'); //assign it to a newly created game instance
 
         //restart the animation loop
         Animation.animate(game);

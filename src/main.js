@@ -1,7 +1,7 @@
 import { Game } from './components/Game.js'
 import { Animation } from './components/Animation.js';
 
-let game = new Game();
+let game = new Game('three-container');
 
 
 function main() {

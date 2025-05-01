@@ -22,15 +22,6 @@ export class Player {
         this.bounding_box = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
         this.bounding_box.setFromObject(this.playerMesh);
         this.helper = new THREE.Box3Helper(this.bounding_box, 0xff0000);
-
-        
-        //player camera
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 4000);
-        this.camera.position.x = this.playerMesh.position.x; //-left +right
-        this.camera.position.y = this.playerMesh.position.y +80;
-        this.camera.position.z = this.playerMesh.position.z +150; // -forward +backward
-        
-
     
         //lane flags
         this.currentLane = 'center_lane';
@@ -62,7 +53,7 @@ export class Player {
     updatePosition() {
         this.updatePlayerMesh();
         this.updateBoundingBox();
-        this.updateCameraPosition();
+        //this.updateCameraPosition();
     }
 
     updatePlayerMesh() {
@@ -96,11 +87,11 @@ export class Player {
     
     
 
-    updateCameraPosition() {
-        this.camera.position.x = this.playerMesh.position.x; //-left +right
-        this.camera.position.y = this.playerMesh.position.y +80;
-        this.camera.position.z = this.playerMesh.position.z +150; // -forward +backward
-    }
+    // updateCameraPosition() {
+    //     this.camera.position.x = this.playerMesh.position.x; //-left +right
+    //     this.camera.position.y = this.playerMesh.position.y +80;
+    //     this.camera.position.z = this.playerMesh.position.z +150; // -forward +backward
+    // }
     
 
     startJump() {

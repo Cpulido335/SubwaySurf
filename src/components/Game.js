@@ -11,14 +11,26 @@ import { PLAYER_SPEED } from '../settings.js'
 
 export class Game {
     
-    constructor() 
+    constructor(containerId) 
     {
-        this.scene = new THREE.Scene()
+        // 1. Grab container and measure it
+        this.container = document.getElementById(containerId);
+        const width  = this.container.clientWidth;
+        const height = this.container.clientHeight;
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: true })
-        this.renderer.setSize(window.innerWidth, window.innerHeight)
+        // 2. Create renderer *before* we size it
+        this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.shadowMap.enabled = true;
-        document.body.appendChild(this.renderer.domElement)
+        this.container.appendChild(this.renderer.domElement);
+
+        // 3. Create camera using the container’s aspect ratio
+        const { clientWidth: w, clientHeight: h } = this.container;
+        this.camera = new THREE.PerspectiveCamera(75, w / h, 0.1, 4000);
+        
+        // 4. Apply initial size
+        this.onWindowResize();
+        
+        this.scene = new THREE.Scene()
 
         //background
         this.loader = new THREE.TextureLoader();
@@ -38,12 +50,9 @@ export class Game {
         this.al = new THREE.AmbientLight(0xffffff, 1); //ambient light
         this.scene.add(this.al);
 
-        //direction light PROBLEM: why tf do we need this
         this.directional_light = new THREE.DirectionalLight(0xffffff, 1);
         this.directional_light.position.set(0, 400, 0);
-        this.directional_light.castShadow = true;  // Enable shadow casting for the light source
-        // Set the target's position — e.g., directly below and in front
-        //this.directional_light.target.position.set(0, 0, -1);
+        this.directional_light.castShadow = true; 
         this.scene.add(this.directional_light);
 
         // Add a helper to visualize the directional light
@@ -55,7 +64,7 @@ export class Game {
         this.modelMeshQueue = [];
         this.surfaceObjectBoundingBoxQueue = [];
 
-        // death object queues
+        //death object queues
         this.deathObjectMeshQueue = [];
         this.deathObjectBoundingBoxQueue = [];
         
@@ -71,18 +80,18 @@ export class Game {
         this.player = new Player();
         this.player.addToScene(this.scene);
 
+        this.updateCameraPosition(); // position it relative to your player
+
         //add controls
         this.addControls(this.player)
 
         //carriage spawner timer
         this.timer1 = new RandomEventTimer(() => this.s.spawnCarriage(this.player.playerMesh.position.z), 2000);
-        this.timer1.start(); //start the timer
+        this.timer1.start(); 
         //coin spawner timer
         this.timer2 = new RandomEventTimer(() => this.s.spawnCoin(this.player.playerMesh.position.z), 500);
-        this.timer2.start(); //start the timer
+        this.timer2.start(); 
 
-        
-        
         //debug overlay
         this.debugOverlay = new DebugOverlay();
 
@@ -91,17 +100,23 @@ export class Game {
     }
 
 
+    updateCameraPosition() {
+        this.camera.position.x = this.player.playerMesh.position.x; //-left +right
+        this.camera.position.y = this.player.playerMesh.position.y +80;
+        this.camera.position.z = this.player.playerMesh.position.z +150; // -forward +backward
+    }
+
 
     addControls(player) {
         function onDocumentKeyDown(event) {
             const keyCode = event.which || event.keyCode;
     
-            // Space bar to jump
+            //space bar
             if (keyCode === 32) {
                 player.startJump();
             }
     
-            // A = 65, D = 68
+            //A = 65, D = 68
             switch (player.currentLane) {
                 case 'left_lane':
                     if (keyCode === 68) {
@@ -125,34 +140,39 @@ export class Game {
         document.addEventListener("keydown", onDocumentKeyDown, false);
     }
     
+    onWindowResize() {
+        const w = this.container.clientWidth;
+        const h = this.container.clientHeight;
+    
+        //resize renderer
+        this.renderer.setSize(w, h);
+    
+        //update camera
+        this.camera.aspect = w / h;
+        this.camera.updateProjectionMatrix();
+    }
+
     destroy() {
-    
-        //Remove renderer canvas
-        if (this.renderer && this.renderer.domElement && document.body.contains(this.renderer.domElement)) {
-            document.body.removeChild(this.renderer.domElement);
+        if (this.renderer && this.renderer.domElement && this.container.contains(this.renderer.domElement)) {
+          this.container.removeChild(this.renderer.domElement);
         }
-    
-        //stop timers if any
-        if (this.timer1) {
-            this.timer1.stop();
-        }
-        if (this.timer2) {
-            this.timer2.stop();
-        }
-    
-    
-        //clear object references
+      
+        window.removeEventListener('resize', this._onResizeCallback);
+        this.timer1?.stop();
+        this.timer2?.stop();
+
         this.surfaceObjectMeshQueue = [];
         this.modelMeshQueue = [];
         this.surfaceObjectBoundingBoxQueue = [];
         this.deathObjectMeshQueue = [];
         this.deathObjectBoundingBoxQueue = [];
+    
+        this.container.innerHTML = '';
     }
+      
 
     updateLight() {
         this.directional_light.translateZ(PLAYER_SPEED * -1);
-
-        //this.playerMesh.translateZ(PLAYER_SPEED * -1);
     }
 } 
     
