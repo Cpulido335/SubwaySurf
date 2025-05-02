@@ -41,23 +41,23 @@ export class CollisionDetection {
     }
 
 
-    static pollCollisions(player, boundingBoxQueue, deathBoundingBoxQueue, coinBoundingBoxQueue, coinQueue)
+    static pollCollisions(game)
     {
-        this.setFallState(player, boundingBoxQueue);
+        this.setFallState(game.player, game.surfaceObjectBoundingBoxQueue);
 
         //check coin collisions 
-        this.pollCoinCollisions(player, coinBoundingBoxQueue, coinQueue);
+        this.pollCoinCollisions(game);
 
         //check for collision with fronts of carriages
-        if (this.checkCollisions(player, deathBoundingBoxQueue)){
-            player.isAlive = false; //if colliding with deathBoundingBox set alive flag to false (player death state)
+        if (this.checkCollisions(game.player, game.deathObjectBoundingBoxQueue)){
+            game.player.isAlive = false; //if colliding with deathBoundingBox set alive flag to false (player death state)
         }
     }
 
 
-    static pollCoinCollisions(player, coinBoundingBoxQueue, coinQueue) {
-        for (let i = coinBoundingBoxQueue.length - 1; i >= 0; i--) {
-            const currentBoundingBox = coinBoundingBoxQueue[i];
+    static pollCoinCollisions(game) {
+        for (let i = game.coinBoundingBoxQueue.length - 1; i >= 0; i--) {
+            const currentBoundingBox = game.coinBoundingBoxQueue[i];
 
             if (
                 isNaN(currentBoundingBox.min.x) || isNaN(currentBoundingBox.max.x) ||
@@ -68,17 +68,19 @@ export class CollisionDetection {
                 continue; //skip this one but keep checking others
             }
 
-            if (currentBoundingBox.intersectsBox(player.bounding_box)) { //this basicallay says, were on top of something therefore were not falling anymore
+            if (currentBoundingBox.intersectsBox(game.player.bounding_box)) { //this basicallay says, were on top of something therefore were not falling anymore
                 console.log('Collision Detected!', "    currentBoundingBox: ", currentBoundingBox);
-                coinBoundingBoxQueue.splice(i, 1); // Remove the collided bounding box
+                game.coinBoundingBoxQueue.splice(i, 1); // Remove the collided bounding box
                 
-                let model = coinQueue[i];
+                let model = game.coinQueue[i];
+
+                game.scene.remove(model)
 
                 if (model.geometry) model.geometry.dispose();
                 if (model.material) model.material.dispose(); //this could cause some weird async shit 
 
-                coinQueue.splice(i, 1); //i really hope these queues are symmetric
-                player.coinsCollected +=1;
+                game.coinQueue.splice(i, 1); //i really hope these queues are symmetric
+                game.player.coinsCollected +=1;
             }
         }   
     }

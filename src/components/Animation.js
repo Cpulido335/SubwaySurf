@@ -33,20 +33,14 @@ export class Animation {
             game.player.pollMovements();
 
             //check collisions
-            CollisionDetection.pollCollisions(
-                game.player, 
-                game.surfaceObjectBoundingBoxQueue, 
-                game.deathObjectBoundingBoxQueue,
-                game.coinBoundingBoxQueue,
-                game.coinQueue
-            );
+            CollisionDetection.pollCollisions(game);
 
             //move and remove objects
             this.updatePositions(game);
             game.updateLight();
 
             //debug overlay
-            game.debugOverlay.update(game.player);
+            game.debugOverlay.update(game.player, game); //PROBLEM: this is retarded
 
             //if Game over > reset
             if (!game.player.isAlive) {
@@ -140,13 +134,22 @@ export class Animation {
         }
     }
 
+
     static spinCoins(game) { // Iterate through the coin queue //PROBLEM currently passing coing queue directly
         for (let i = game.coinQueue.length - 1; i >= 0; i--) {
             const coin = game.coinQueue[i];
 
             // Apply rotation to each coin (rotate around the Y-axis)
             coin.rotation.z += 0.05;  
-  
+
+            //this could be a seperate function but im justt gonna put it here cleanCoins(){garbage collection}
+            if (coin.position.z > game.player.playerMesh.position.z + 200) {
+                game.scene.remove(coin);
+                if (coin.geometry) coin.geometry.dispose();
+                if (coin.material) coin.material.dispose();
+                game.coinQueue.splice(i, 1);
+                game.coinBoundingBoxQueue.splice(i, 1);
+            }
         }
     }
 

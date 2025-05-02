@@ -8,7 +8,7 @@ export class CoinObject {
             new THREE.BoxGeometry(50, 50, 2),
             new THREE.MeshPhongMaterial( {color:  0xff0000} )
         )
-
+        this.mesh.visible = false; //make this bitch invisible
         this.mesh.position.set(spawn_position_x, spawn_position_y, spawn_position_z);
 
         //CoinObject.bounding_box for collision detection with coin objects to increase player score

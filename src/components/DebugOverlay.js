@@ -14,13 +14,20 @@ export class DebugOverlay {
         document.body.appendChild(this.element);
     }
 
-    update(player) {
+    update(player, game) {
         this.element.innerText = `
         Jumping: ${player.startedJump}
         Falling: ${player.startedFall}
         Ended Jump: ${player.endedJump}
         player.jumpStartingHeight: ${player.jumpStartingHeight}
         CoinsCollected: ${player.coinsCollected}
+        LengthSurfaceObjectMeshQueue: ${game.surfaceObjectMeshQueue.length}
+        LengthModelMeshQueue: ${game.modelMeshQueue.length}
+        LengthSurfaceObjectBoundingBoxQueue: ${game.surfaceObjectBoundingBoxQueue.length}
+        LengthDeathObjectMeshQueue: ${game.deathObjectMeshQueue.length}
+        LengthDeathObjectBoundingBoxQueue: ${game.deathObjectBoundingBoxQueue.length}
+        LengthCoinMeshQueue: ${game.coinQueue.length}
+        LengthCoinBoundingBoxQueue: ${game.coinBoundingBoxQueue.length}
         `;
     }
 }
