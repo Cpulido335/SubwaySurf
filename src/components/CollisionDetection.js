@@ -40,20 +40,40 @@ export class CollisionDetection {
 
     }
 
+    
     static pollCollisions(player, boundingBoxQueue, deathBoundingBoxQueue, coinBoundingBoxQueue)
     {
         this.setFallState(player, boundingBoxQueue);
 
-        //check for collisions with coins
-        if (this.checkCollisions(player, coinBoundingBoxQueue)) {
-            player.coinsCollected += 1;
-        }
+        //check coin collisions 
+        this.pollCoinCollisions(player, coinBoundingBoxQueue);
 
         //check for collision with fronts of carriages
         if (this.checkCollisions(player, deathBoundingBoxQueue)){
             player.isAlive = false; //if colliding with deathBoundingBox set alive flag to false (player death state)
         }
     }
-    
+
+
+    static pollCoinCollisions(player, coinBoundingBoxQueue) {
+        for (let i = coinBoundingBoxQueue.length - 1; i >= 0; i--) {
+            const currentBoundingBox = coinBoundingBoxQueue[i];
+
+            if (
+                isNaN(currentBoundingBox.min.x) || isNaN(currentBoundingBox.max.x) ||
+                isNaN(currentBoundingBox.min.y) || isNaN(currentBoundingBox.max.y) ||
+                isNaN(currentBoundingBox.min.z) || isNaN(currentBoundingBox.max.z)
+            ) {
+                console.warn("Skipping collision check — invalid bounding box:", currentBoundingBox);
+                continue; //skip this one but keep checking others
+            }
+
+            if (currentBoundingBox.intersectsBox(player.bounding_box)) { //this basicallay says, were on top of something therefore were not falling anymore
+                console.log('Collision Detected!', "    currentBoundingBox: ", currentBoundingBox);
+                coinBoundingBoxQueue.splice(i, 1); // Remove the collided bounding box
+                player.coinsCollected +=1;
+            }
+        }   
+    }
 
 }
