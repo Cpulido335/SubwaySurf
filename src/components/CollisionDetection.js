@@ -40,13 +40,13 @@ export class CollisionDetection {
 
     }
 
-    
-    static pollCollisions(player, boundingBoxQueue, deathBoundingBoxQueue, coinBoundingBoxQueue)
+
+    static pollCollisions(player, boundingBoxQueue, deathBoundingBoxQueue, coinBoundingBoxQueue, coinQueue)
     {
         this.setFallState(player, boundingBoxQueue);
 
         //check coin collisions 
-        this.pollCoinCollisions(player, coinBoundingBoxQueue);
+        this.pollCoinCollisions(player, coinBoundingBoxQueue, coinQueue);
 
         //check for collision with fronts of carriages
         if (this.checkCollisions(player, deathBoundingBoxQueue)){
@@ -55,7 +55,7 @@ export class CollisionDetection {
     }
 
 
-    static pollCoinCollisions(player, coinBoundingBoxQueue) {
+    static pollCoinCollisions(player, coinBoundingBoxQueue, coinQueue) {
         for (let i = coinBoundingBoxQueue.length - 1; i >= 0; i--) {
             const currentBoundingBox = coinBoundingBoxQueue[i];
 
@@ -71,6 +71,13 @@ export class CollisionDetection {
             if (currentBoundingBox.intersectsBox(player.bounding_box)) { //this basicallay says, were on top of something therefore were not falling anymore
                 console.log('Collision Detected!', "    currentBoundingBox: ", currentBoundingBox);
                 coinBoundingBoxQueue.splice(i, 1); // Remove the collided bounding box
+                
+                let model = coinQueue[i];
+
+                if (model.geometry) model.geometry.dispose();
+                if (model.material) model.material.dispose(); //this could cause some weird async shit 
+
+                coinQueue.splice(i, 1); //i really hope these queues are symmetric
                 player.coinsCollected +=1;
             }
         }   

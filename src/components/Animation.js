@@ -37,7 +37,8 @@ export class Animation {
                 game.player, 
                 game.surfaceObjectBoundingBoxQueue, 
                 game.deathObjectBoundingBoxQueue,
-                game.coinBoundingBoxQueue
+                game.coinBoundingBoxQueue,
+                game.coinQueue
             );
 
             //move and remove objects
@@ -66,14 +67,14 @@ export class Animation {
     }
 
     static updatePositions(game) {
-        //update model meshes
+        //update carriage model meshes
         for (let i = game.modelMeshQueue.length - 1; i >= 0; i--) {
             const model = game.modelMeshQueue[i];
             model.translateZ(CARRIAGE_SPEED);
 
             if (model.position.z > game.player.playerMesh.position.z + 200) {
                 game.scene.remove(model);
-                if (model.geometry) model.geometry.dispose();
+                if (model.geometry) model.geometry.dispose(); //PROBLEM: does this even fucking do anything?? MEMLEAK
                 if (model.material) model.material.dispose();
                 game.modelMeshQueue.splice(i, 1);
             }
