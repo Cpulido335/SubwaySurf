@@ -109,39 +109,6 @@ export class Game {
     }
 
 
-    // addControls(player) {
-    //     function onDocumentKeyDown(event) {
-    //         const keyCode = event.which || event.keyCode;
-    
-    //         //space bar
-    //         if (keyCode === 32) {
-    //             player.startJump();
-    //         }
-    
-    //         //A = 65, D = 68
-    //         switch (player.currentLane) {
-    //             case 'left_lane':
-    //                 if (keyCode === 68) {
-    //                     player.destinationLane = 'center_lane';
-    //                 }
-    //                 break;
-    //             case 'center_lane':
-    //                 if (keyCode === 65) {
-    //                     player.destinationLane = 'left_lane';
-    //                 } else if (keyCode === 68) {
-    //                     player.destinationLane = 'right_lane';
-    //                 }
-    //                 break;
-    //             case 'right_lane':
-    //                 if (keyCode === 65) {
-    //                     player.destinationLane = 'center_lane';
-    //                 }
-    //                 break;
-    //         }
-    //     }
-    //     document.addEventListener("keydown", onDocumentKeyDown, false);
-    // }
-    
     onWindowResize() {
         const w = this.container.clientWidth;
         const h = this.container.clientHeight;
@@ -154,24 +121,6 @@ export class Game {
         this.camera.updateProjectionMatrix();
     }
 
-    destroy() {
-        if (this.renderer && this.renderer.domElement && this.container.contains(this.renderer.domElement)) {
-          this.container.removeChild(this.renderer.domElement);
-        }
-      
-        window.removeEventListener('resize', this._onResizeCallback);
-        this.timer1?.stop();
-        this.timer2?.stop();
-
-        this.surfaceObjectMeshQueue = [];
-        this.modelMeshQueue = [];
-        this.surfaceObjectBoundingBoxQueue = [];
-        this.deathObjectMeshQueue = [];
-        this.deathObjectBoundingBoxQueue = [];
-    
-        this.container.innerHTML = '';
-    }
-      
 
     updateLight() {
         this.directional_light.translateZ(PLAYER_SPEED * -1);
@@ -240,7 +189,25 @@ export class Game {
         document.addEventListener('touchstart', onTouchStart,     false);
         document.addEventListener('touchend',   onTouchEnd,       false);
     }
-      
-      
+
+
+    destroy() {
+      if (this.renderer && this.renderer.domElement && this.container.contains(this.renderer.domElement)) {
+        this.container.removeChild(this.renderer.domElement);
+      }
+    
+      window.removeEventListener('resize', this._onResizeCallback);
+      this.timer1?.stop();
+      this.timer2?.stop();
+
+      this.surfaceObjectMeshQueue = [];
+      this.modelMeshQueue = [];
+      this.surfaceObjectBoundingBoxQueue = [];
+      this.deathObjectMeshQueue = [];
+      this.deathObjectBoundingBoxQueue = [];
+  
+      this.container.innerHTML = '';
+  }
+          
 } 
     
