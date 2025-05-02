@@ -68,10 +68,12 @@ export class Game {
         this.deathObjectMeshQueue = [];
         this.deathObjectBoundingBoxQueue = [];
         
+        //coinMeshQueue and coinBoundingBoxQueue
         this.coinQueue = [];
+        this.coinBoundingBoxQueue = [];
 
         //create spawner instance //PROBLEM: this would be our carriage spawner and have the function spawnCoin or spawn a line of coins all at once 
-        this.s = new Spawner(this.scene, this.modelMeshQueue, this.surfaceObjectMeshQueue, this.surfaceObjectBoundingBoxQueue, this.deathObjectMeshQueue, this.deathObjectBoundingBoxQueue, this.coinQueue);
+        this.s = new Spawner(this.scene, this.modelMeshQueue, this.surfaceObjectMeshQueue, this.surfaceObjectBoundingBoxQueue, this.deathObjectMeshQueue, this.deathObjectBoundingBoxQueue, this.coinQueue, this.coinBoundingBoxQueue);
         
         //create gorund instance
         this.ground = new Ground(this.scene);       

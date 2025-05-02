@@ -20,6 +20,7 @@ export class DebugOverlay {
         Falling: ${player.startedFall}
         Ended Jump: ${player.endedJump}
         player.jumpStartingHeight: ${player.jumpStartingHeight}
+        CoinsCollected: ${player.coinsCollected}
         `;
     }
 }

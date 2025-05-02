@@ -2,10 +2,9 @@
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js"; // Import GLTFLoader
 import { SurfaceObject } from './SurfaceObject.js'; 
 import { DeathObject } from './DeathObject.js'; 
+import { CoinObject } from './CoinObject.js';
 
 import { LEFT_LANE_POSITION, CENTER_LANE_POSITION, RIGHT_LANE_POSITION } from '../settings.js';
-
-//import { CoinSpawner } from "./Coin.js";
 
 
 export class Spawner {
@@ -13,7 +12,7 @@ export class Spawner {
                 modelMeshQueue, 
                 surfaceObjectMeshQueue, surfaceObjectBoundingBoxQueue, 
                 deathObjectMeshQueue, deathObjectBoundingBoxQueue,
-                coinQueue) 
+                coinQueue, coinBoundingBoxQueue) 
     {
         this.scene = scene; //a spawner instance needs references to the scene and the object queues
         this.surfaceObjectMeshQueue = surfaceObjectMeshQueue;
@@ -24,6 +23,8 @@ export class Spawner {
         this.deathObjectBoundingBoxQueue = deathObjectBoundingBoxQueue;
 
         this.coinQueue = coinQueue;
+        this.coinBoundingBoxQueue = coinBoundingBoxQueue;
+
 
         this.spawn_lanes = [1, 2, 3]; 
     }
@@ -142,5 +143,10 @@ export class Spawner {
             default: x_position = 0; // Default if lane is not 0, 1, or 2
         }
         this.createCoinObject(x_position, z_position);
+        
+        //create the bounding box object
+        var coinObject = new CoinObject(x_position, 20, z_position, this.coinBoundingBoxQueue);
+        this.scene.add(coinObject.mesh);
+        this.scene.add(coinObject.bounding_box);
     }
 }

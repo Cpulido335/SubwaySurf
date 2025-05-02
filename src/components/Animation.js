@@ -36,7 +36,8 @@ export class Animation {
             CollisionDetection.pollCollisions(
                 game.player, 
                 game.surfaceObjectBoundingBoxQueue, 
-                game.deathObjectBoundingBoxQueue
+                game.deathObjectBoundingBoxQueue,
+                game.coinBoundingBoxQueue
             );
 
             //move and remove objects

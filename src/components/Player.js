@@ -48,6 +48,9 @@ export class Player {
 
         //death 
         this.deathScreen = new Death();
+
+        //coins
+        this.coinsCollected = 0;
     }
 
     updatePosition() {

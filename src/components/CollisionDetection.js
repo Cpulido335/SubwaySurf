@@ -40,9 +40,14 @@ export class CollisionDetection {
 
     }
 
-    static pollCollisions(player, boundingBoxQueue, deathBoundingBoxQueue)
+    static pollCollisions(player, boundingBoxQueue, deathBoundingBoxQueue, coinBoundingBoxQueue)
     {
         this.setFallState(player, boundingBoxQueue);
+
+        //check for collisions with coins
+        if (this.checkCollisions(player, coinBoundingBoxQueue)) {
+            player.coinsCollected += 1;
+        }
 
         //check for collision with fronts of carriages
         if (this.checkCollisions(player, deathBoundingBoxQueue)){
