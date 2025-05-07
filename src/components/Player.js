@@ -43,6 +43,9 @@ export class Player {
         //jump starting height
         this.jumpStartingHeight = 0;
 
+        //player speed
+        this.playerSpeed = PLAYER_SPEED //the constant is starting speed
+
         //boolean alive
         this.isAlive = true;
 
@@ -60,7 +63,7 @@ export class Player {
     }
 
     updatePlayerMesh() {
-        this.playerMesh.translateZ(PLAYER_SPEED * -1);
+        this.playerMesh.translateZ(this.playerSpeed * -1);
     }
 
     updateBoundingBox() {

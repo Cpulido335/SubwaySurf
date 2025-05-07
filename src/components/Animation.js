@@ -60,6 +60,11 @@ export class Animation {
 
             //window resizing
             game.onWindowResize();
+
+            if(game.player.playerSpeed <= 12) //gradually increase speed
+            {
+                game.player.playerSpeed += 0.0005;
+            }
         }
     }
 

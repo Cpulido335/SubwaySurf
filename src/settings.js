@@ -1,6 +1,6 @@
 //Constants
 export const CARRIAGE_SPEED = 3;
-export const PLAYER_SPEED = 3;
+export const PLAYER_SPEED = 3; //STARTING SPEED
 export const PLAYER_LATERAL_SPEED = 5;
 export const PLAYER_JUMP_HEIGHT = 140;
 export const PLAYER_JUMP_POWER = 10;

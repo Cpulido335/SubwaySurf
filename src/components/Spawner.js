@@ -74,7 +74,7 @@ export class Spawner {
 
     spawnCarriage(playerZPosition) {
         let x_position = 0;
-        let z_position = playerZPosition - 1000; //this has to be based on the players z position PROBLEM: instead of 400 you should put something like CARRIAGE_SPAWN_DISTANCE from settings
+        let z_position = playerZPosition - 2000; //this has to be based on the players z position PROBLEM: instead of 400 you should put something like CARRIAGE_SPAWN_DISTANCE from settings
         this.lane = this.pickRandomLane();
         console.log("Picked lane:", this.lane);
 

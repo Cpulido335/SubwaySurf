@@ -93,7 +93,7 @@ export class Game {
         this.addControls(this.player)
 
         //carriage spawner timer
-        this.timer1 = new RandomEventTimer(() => this.s.spawnCarriage(this.player.playerMesh.position.z), 2000);
+        this.timer1 = new RandomEventTimer(() => this.s.spawnCarriage(this.player.playerMesh.position.z), 1000);
         this.timer1.start(); 
         //coin spawner timer
         this.timer2 = new RandomEventTimer(() => this.s.spawnCoin(this.player.playerMesh.position.z), 500);
