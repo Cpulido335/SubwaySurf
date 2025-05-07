@@ -21,7 +21,7 @@ export class Player {
         //player bounding box
         this.bounding_box = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
         this.bounding_box.setFromObject(this.playerMesh);
-        this.helper = new THREE.Box3Helper(this.bounding_box, 0xff0000);
+        //this.helper = new THREE.Box3Helper(this.bounding_box, 0xff0000);
     
         //lane flags
         this.currentLane = 'center_lane';
@@ -221,7 +221,7 @@ export class Player {
     
             //move these INSIDE after loading the model!
             scene.add(this.bounding_box);
-            scene.add(this.helper);
+            //scene.add(this.helper);
         });
     }
 
