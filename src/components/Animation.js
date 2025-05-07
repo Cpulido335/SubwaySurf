@@ -39,6 +39,9 @@ export class Animation {
             this.updatePositions(game);
             game.updateLight();
 
+            //update score
+            game.coinOverlay.update(game.player);
+
             //debug overlay
             game.debugOverlay.update(game.player, game); //PROBLEM: this is retarded
 

@@ -7,6 +7,7 @@ import { Player } from './Player.js'
 import { DebugOverlay } from './DebugOverlay.js';
 import { Death } from './Death.js';
 import { PLAYER_SPEED } from '../settings.js'
+import { CoinOverlay } from './CoinOverlay.js'
 
 
 export class Game {
@@ -99,6 +100,9 @@ export class Game {
 
         //death screen
         this.death = new Death();
+        
+        //coin overlay (score)
+        this.coinOverlay = new CoinOverlay();
     }
 
 
