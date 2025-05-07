@@ -22,6 +22,10 @@ export class Game {
         // 2. Create renderer *before* we size it
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.renderer.shadowMap.enabled = true;
+        
+        //lower the quality to 0.5 (half resolution) to improve performance
+        this.renderer.setPixelRatio(0.5); 
+
         this.container.appendChild(this.renderer.domElement);
 
         // 3. Create camera using the container’s aspect ratio
@@ -119,6 +123,8 @@ export class Game {
     
         //resize renderer
         this.renderer.setSize(w, h);
+
+        
     
         //update camera
         this.camera.aspect = w / h;
