@@ -56,8 +56,8 @@ export class Game {
         this.scene.add(this.directional_light);
 
         // Add a helper to visualize the directional light
-        const lightHelper = new THREE.DirectionalLightHelper(this.directional_light, 50, 0xff0000);
-        this.scene.add(lightHelper);
+        //const lightHelper = new THREE.DirectionalLightHelper(this.directional_light, 50, 0xff0000);
+        //this.scene.add(lightHelper);
 
         //Object queues 
         this.surfaceObjectMeshQueue = []; 
