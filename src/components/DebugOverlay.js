@@ -1,4 +1,8 @@
+let debugOverlayEnabled = false;
+
 export class DebugOverlay {
+  
+
     constructor() {
         this.element = document.createElement('div');
         this.element.style.position = 'absolute';
@@ -11,10 +15,16 @@ export class DebugOverlay {
         this.element.style.fontSize = '14px';
         this.element.style.zIndex = '999';
         this.element.innerText = 'Debug Info Loading...';
-        document.body.appendChild(this.element);
+
+        // Only append the element if enabled
+        if (debugOverlayEnabled) {
+            document.body.appendChild(this.element);
+        }
     }
 
     update(player, game) {
+        if (!debugOverlayEnabled) return; // Don't update if disabled
+
         this.element.innerText = `
         Jumping: ${player.startedJump}
         Falling: ${player.startedFall}
