@@ -24,7 +24,7 @@ export class Game {
         this.renderer.shadowMap.enabled = true;
         
         //lower the quality to 0.5 (half resolution) to improve performance
-        this.renderer.setPixelRatio(0.5); 
+        //this.renderer.setPixelRatio(0.5); 
 
         this.container.appendChild(this.renderer.domElement);
 
